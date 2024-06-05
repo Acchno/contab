@@ -6,6 +6,12 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Substitua por uma chave secreta segura
 
+# Inicializar DataFrame vazio ou carregar de dados existentes
+try:
+    df = pd.read_excel('dados.xlsx')
+except FileNotFoundError:
+    df = pd.DataFrame(columns=['Nome', 'Item', 'Quantidade'])
+
 # Caminho do arquivo de dados
 data_file = 'data/registros.csv'
 
@@ -63,24 +69,20 @@ def entrada():
 
 @app.route('/saida', methods=['GET', 'POST'])
 def saida():
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
     if request.method == 'POST':
         nome = request.form['nome']
         item = request.form['item']
         quantidade = int(request.form['quantidade'])
-        df = pd.read_csv(data_file)
-        # Verifica se há quantidade suficiente do item para subtrair
-        current_stock = df[df['Item'] == item]['Quantidade'].sum()
-        if current_stock >= quantidade:
-            new_row = pd.DataFrame([{'Tipo': 'Saída', 'Data_Hora': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'Nome': nome, 'Item': item, 'Quantidade': -quantidade}])
-            df = pd.concat([df, new_row], ignore_index=True)
-            df.to_csv(data_file, index=False)
-        else:
-            return render_template('saida.html', error="Quantidade insuficiente em estoque", item_suggestions=item_suggestions)
-        return redirect(url_for('home'))
-    return render_template('saida.html', item_suggestions=item_suggestions)
 
+        global df
+        if item in df['Item'].values:
+            df.loc[df['Item'] == item, 'Quantidade'] -= quantidade
+            df = df[df['Quantidade'] > 0]
+
+            df.to_excel('dados.xlsx', index=False)
+        return redirect(url_for('home'))
+    return render_template('saida.html')
+    
 @app.route('/controle', methods=['GET'])
 def controle():
     if not session.get('logged_in'):
@@ -103,6 +105,6 @@ def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
