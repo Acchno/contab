@@ -1,0 +1,5 @@
+Tipo,Data_Hora,Nome,Item,Quantidade
+Entrada,2024-05-22 23:38:10,cleyton,C4,4
+Saída,2024-05-22 23:38:22,cleyton,C4,-2
+Entrada,2024-05-25 16:00:48,dante,Bala 9mm,900
+Saída,2024-05-25 16:02:06,dante,Bala 9mm,-100

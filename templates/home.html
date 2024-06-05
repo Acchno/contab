@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Registro de Entradas e Saídas</h1>
+    <a href="/entrada"><button>Registrar Entrada</button></a>
+    <a href="/saida"><button>Registrar Saída</button></a>
+    <form action="/controle" method="get">
+        <button type="submit">Controle</button>
+    </form>
+    <form action="/gerar_relatorio" method="post">
+        <button type="submit">Gerar Relatório</button>
+    </form>
+    <br>
+    <a href="/logout">Logout</a>
+</body>
+</html>
